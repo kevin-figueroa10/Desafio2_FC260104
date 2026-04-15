@@ -7,6 +7,16 @@ class Ahorcado
         "iteracion", "condicional"
     };
 
+    static string[] dibujosAhorcado = {
+        "  +---+\n  |   |\n      |\n      |\n      |\n      |\n=========",
+        "  +---+\n  |   |\n  O   |\n      |\n      |\n      |\n=========",
+        "  +---+\n  |   |\n  O   |\n  |   |\n      |\n      |\n=========",
+        "  +---+\n  |   |\n  O   |\n /|   |\n      |\n      |\n=========",
+        "  +---+\n  |   |\n  O   |\n /|\\  |\n      |\n      |\n=========",
+        "  +---+\n  |   |\n  O   |\n /|\\  |\n /    |\n      |\n=========",
+        "  +---+\n  |   |\n  O   |\n /|\\  |\n / \\  |\n      |\n========="
+    };
+
     static void Main(string[] args)
     {
         Console.OutputEncoding = System.Text.Encoding.UTF8;
@@ -20,10 +30,7 @@ class Ahorcado
 
             switch (opcion)
             {
-                case "1":
-                    Console.WriteLine("Juego en construccion...");
-                    Console.ReadLine();
-                    break;
+                case "1": JugarAhorcado(); break;
                 case "2": MostrarInstrucciones(); break;
                 case "3":
                     salir = true;
@@ -67,43 +74,117 @@ class Ahorcado
     static void JugarAhorcado()
     {
         Random random = new Random();
-        string palabra = bancoPalabras[random.Next(0, bancoPalabras.Length)];
+        string palabraSecreta = bancoPalabras[random.Next(0, bancoPalabras.Length)];
 
-        char[] progreso = new char[palabra.Length];
-        for (int i = 0; i < progreso.Length; i++)
-            progreso[i] = '_';
+        char[] letrasUsadas = new char[26];
+        int totalLetrasUsadas = 0;
 
-        int intentos = 0;
+        char[] letrasAdivinadas = new char[palabraSecreta.Length];
+        for (int i = 0; i < letrasAdivinadas.Length; i++)
+            letrasAdivinadas[i] = '_';
 
-        while (intentos < 6)
+        int intentosFallidos = 0;
+        int maxIntentos = 6;
+        bool gano = false;
+
+        while (intentosFallidos < maxIntentos && !gano)
         {
             Console.Clear();
+            MostrarEstadoJuego(intentosFallidos, letrasAdivinadas, letrasUsadas, totalLetrasUsadas, maxIntentos);
 
-            for (int i = 0; i < progreso.Length; i++)
-                Console.Write(progreso[i] + " ");
+            Console.Write("\nIngrese una letra: ");
+            string entrada = Console.ReadLine().ToLower().Trim();
 
-            Console.Write("\nLetra: ");
-            char letra = Console.ReadLine()[0];
-
-            bool acierto = false;
-
-            for (int i = 0; i < palabra.Length; i++)
+            if (entrada.Length != 1 || !char.IsLetter(entrada[0]))
             {
-                if (palabra[i] == letra)
+                Console.WriteLine("Solo se acepta una letra valida.");
+                Console.ReadLine();
+                continue;
+            }
+
+            char letra = entrada[0];
+
+            if (LetraYaUsada(letrasUsadas, totalLetrasUsadas, letra))
+            {
+                Console.WriteLine("Esa letra ya fue ingresada.");
+                Console.ReadLine();
+                continue;
+            }
+
+            letrasUsadas[totalLetrasUsadas++] = letra;
+
+            bool letraCorrecta = false;
+            for (int i = 0; i < palabraSecreta.Length; i++)
+            {
+                if (palabraSecreta[i] == letra)
                 {
-                    progreso[i] = letra;
-                    acierto = true;
+                    letrasAdivinadas[i] = letra;
+                    letraCorrecta = true;
                 }
             }
 
-            if (!acierto) intentos++;
+            if (!letraCorrecta)
+            {
+                intentosFallidos++;
+                Console.WriteLine("Letra incorrecta.");
+                Console.ReadLine();
+            }
+
+            gano = PalabraCompleta(letrasAdivinadas);
         }
 
-        Console.WriteLine("Fin del juego");
-        Console.ReadLine();
+        Console.Clear();
+        MostrarResultadoFinal(gano, intentosFallidos, maxIntentos, letrasAdivinadas, palabraSecreta);
+
+        Console.Write("\nDesea jugar de nuevo? (s/n): ");
+        if (Console.ReadLine().ToLower().Trim() == "s")
+            JugarAhorcado();
+    }
+
+    static void MostrarEstadoJuego(int intentosFallidos, char[] letrasAdivinadas,
+        char[] letrasUsadas, int totalUsadas, int maxIntentos)
+    {
+        Console.WriteLine(dibujosAhorcado[intentosFallidos]);
+        Console.WriteLine();
+
+        Console.Write("Palabra: ");
+        for (int i = 0; i < letrasAdivinadas.Length; i++)
+            Console.Write(letrasAdivinadas[i] + " ");
+
+        Console.WriteLine($"\n\nIntentos: {intentosFallidos}/{maxIntentos}");
+
+        Console.Write("Letras usadas: ");
+        for (int i = 0; i < totalUsadas; i++)
+            Console.Write(letrasUsadas[i] + " ");
+    }
+
+    static void MostrarResultadoFinal(bool gano, int intentosFallidos, int maxIntentos,
+        char[] letrasAdivinadas, string palabraSecreta)
+    {
+        Console.WriteLine("=============================");
+        if (gano)
+        {
+            Console.WriteLine("GANASTE!");
+        }
+        else
+        {
+            Console.WriteLine("PERDISTE!");
+            Console.WriteLine(dibujosAhorcado[maxIntentos]);
+            Console.WriteLine("Palabra: " + palabraSecreta);
+        }
+    }
+
+    static bool LetraYaUsada(char[] letrasUsadas, int totalUsadas, char letra)
+    {
+        for (int i = 0; i < totalUsadas; i++)
+            if (letrasUsadas[i] == letra) return true;
+        return false;
+    }
+
+    static bool PalabraCompleta(char[] letrasAdivinadas)
+    {
+        for (int i = 0; i < letrasAdivinadas.Length; i++)
+            if (letrasAdivinadas[i] == '_') return false;
+        return true;
     }
 }
-
-
-
-
