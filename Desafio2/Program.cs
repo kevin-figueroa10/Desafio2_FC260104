@@ -63,4 +63,47 @@ class Ahorcado
         Console.WriteLine("\nPresione Enter para regresar...");
         Console.ReadLine();
     }
+
+    static void JugarAhorcado()
+    {
+        Random random = new Random();
+        string palabra = bancoPalabras[random.Next(0, bancoPalabras.Length)];
+
+        char[] progreso = new char[palabra.Length];
+        for (int i = 0; i < progreso.Length; i++)
+            progreso[i] = '_';
+
+        int intentos = 0;
+
+        while (intentos < 6)
+        {
+            Console.Clear();
+
+            for (int i = 0; i < progreso.Length; i++)
+                Console.Write(progreso[i] + " ");
+
+            Console.Write("\nLetra: ");
+            char letra = Console.ReadLine()[0];
+
+            bool acierto = false;
+
+            for (int i = 0; i < palabra.Length; i++)
+            {
+                if (palabra[i] == letra)
+                {
+                    progreso[i] = letra;
+                    acierto = true;
+                }
+            }
+
+            if (!acierto) intentos++;
+        }
+
+        Console.WriteLine("Fin del juego");
+        Console.ReadLine();
+    }
 }
+
+
+
+
