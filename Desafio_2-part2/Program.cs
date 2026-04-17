@@ -12,6 +12,14 @@ class SistemaNotas
         double[] notas = new double[n];
 
         IngresarDatos(nombres, notas, n);
+
+        double promedio = Promedio(notas, n);
+        double max = Maximo(notas, n);
+        double min = Minimo(notas, n);
+
+        Console.WriteLine($"Promedio: {promedio}");
+        Console.WriteLine($"Maximo: {max}");
+        Console.WriteLine($"Minimo: {min}");
     }
 
     static int SolicitarCantidadEstudiantes()
@@ -44,5 +52,29 @@ class SistemaNotas
                 Console.WriteLine("Nota invalida.");
             }
         }
+    }
+
+    static double Promedio(double[] notas, int n)
+    {
+        double suma = 0;
+        for (int i = 0; i < n; i++)
+            suma += notas[i];
+        return suma / n;
+    }
+
+    static double Maximo(double[] notas, int n)
+    {
+        double max = notas[0];
+        for (int i = 1; i < n; i++)
+            if (notas[i] > max) max = notas[i];
+        return max;
+    }
+
+    static double Minimo(double[] notas, int n)
+    {
+        double min = notas[0];
+        for (int i = 1; i < n; i++)
+            if (notas[i] < min) min = notas[i];
+        return min;
     }
 }
