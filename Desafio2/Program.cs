@@ -2,14 +2,13 @@
 
 class Ahorcado
 {
-    // Banco de 10 palabras almacenado en un vector unidimensional
     static string[] bancoPalabras = {
         "computadora", "algoritmo", "programacion", "variable",
         "funcion", "lenguaje", "compilador", "estructura",
         "iteracion", "condicional"
     };
 
-    // Dibujos del ahorcado segun los intentos fallidos (0 a 6)
+
     static string[] dibujosAhorcado = {
         "  +---+\n  |   |\n      |\n      |\n      |\n      |\n=========",
         "  +---+\n  |   |\n  O   |\n      |\n      |\n      |\n=========",
@@ -76,14 +75,13 @@ class Ahorcado
 
     static void JugarAhorcado()
     {
-        // Seleccion aleatoria de una palabra del vector
+
         Random random = new Random();
         string palabraSecreta = bancoPalabras[random.Next(0, bancoPalabras.Length)];
 
         char[] letrasUsadas = new char[26];
         int totalLetrasUsadas = 0;
 
-        // Vector que guarda el estado actual de la palabra (guiones bajos o letras)
         char[] letrasAdivinadas = new char[palabraSecreta.Length];
         for (int i = 0; i < letrasAdivinadas.Length; i++)
             letrasAdivinadas[i] = '_';
@@ -100,7 +98,6 @@ class Ahorcado
             Console.Write("\nIngrese una letra: ");
             string entrada = Console.ReadLine().ToLower().Trim();
 
-            // Validar que sea un solo caracter y una letra valida
             if (entrada.Length != 1 || !char.IsLetter(entrada[0]))
             {
                 Console.WriteLine("Solo se acepta una letra valida.");
@@ -110,7 +107,6 @@ class Ahorcado
 
             char letra = entrada[0];
 
-            // Validar que la letra no haya sido usada antes
             if (LetraYaUsada(letrasUsadas, totalLetrasUsadas, letra))
             {
                 Console.WriteLine("Esa letra ya fue ingresada.");
@@ -121,7 +117,6 @@ class Ahorcado
             letrasUsadas[totalLetrasUsadas] = letra;
             totalLetrasUsadas++;
 
-            // Verificar si la letra esta en la palabra y actualizar vector
             bool letraCorrecta = false;
             for (int i = 0; i < palabraSecreta.Length; i++)
             {
@@ -191,16 +186,12 @@ class Ahorcado
         }
         Console.WriteLine("\n=============================");
     }
-
-    // Recorre el vector de letras usadas para verificar si ya fue ingresada
     static bool LetraYaUsada(char[] letrasUsadas, int totalUsadas, char letra)
     {
         for (int i = 0; i < totalUsadas; i++)
             if (letrasUsadas[i] == letra) return true;
         return false;
     }
-
-    // Verifica si ya no quedan guiones bajos en el vector de letras adivinadas
     static bool PalabraCompleta(char[] letrasAdivinadas)
     {
         for (int i = 0; i < letrasAdivinadas.Length; i++)
